@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>3D Game xsayfex and saeyfex</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .container-score{
+            padding: 0px;
+            text-align: center;
+        }
+
+        body { margin: 0; }
+        canvas { width: 100%; height: 100%; display: block; }
+        #crosshair {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            color: white;
+            font-size: 20px;
+        }
+        #inventory {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .inventory-slot {
+            width: 50px;
+            height: 50px;
+            background: #555;
+            border: 2px solid #777;
+            margin: 5px;
+            display: inline-block;
+            cursor: pointer;
+        }
+        #crafting-table {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .crafting-slot {
+            width: 50px;
+            height: 50px;
+            background: #555;
+            border: 2px solid #777;
+            margin: 5px;
+            display: inline-block;
+        }
+        .result-slot {
+            width: 60px;
+            height: 60px;
+            background: #666;
+            border: 3px solid #888;
+            margin: 10px;
+            display: inline-block;
+        }
+        #game-over {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: red;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 32px;
+            font-family: Arial;
+        }
+    </style>
+</head>
+<body>
+    <div id="crosshair">+</div>
+    <div id="inventory">
+        <div id="inventory-slots"></div>
+    </div>
+    <div id="crafting-table">
+        <div id="crafting-grid"></div>
+        <div id="crafting-result" class="result-slot"></div>
+    </div>
+    <div id="game-over">
+        <h1>لقد مت!</h1>
+    </div>
+
+    <div id="game-over"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="./pauseMenu.js"></script>
+    <script>
+        pauseMenu();
+        
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x87CEEB);
+        
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        const zombies = [];
+        let isPlayerDead = false;
+        let isZombiesDead = false;
+
+        alert("انتبه لا يمسك الزومبي")
+        
+        function createZombie(x, y, z) {
+            const zombieGroup = new THREE.Group();
+            
+            const bodyGeometry = new THREE.BoxGeometry(1.2, 2, 0.8);
+            const zombieMaterial = new THREE.MeshPhongMaterial({ 
+                color: 0x2d5a27,
+                roughness: 0.8
+            });
+            const body = new THREE.Mesh(bodyGeometry, zombieMaterial);
+            zombieGroup.add(body);
+            
+            const headGeometry = new THREE.BoxGeometry(1, 1, 1);
+            const headMaterial = new THREE.MeshPhongMaterial({ 
+                color: 0x1a3d1a,
+                roughness: 0.9
+            });
+            const head = new THREE.Mesh(headGeometry, headMaterial);
+            head.position.y = 1.5;
+            zombieGroup.add(head);
+            
+            const eyeGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.1);
+            const eyeMaterial = new THREE.MeshPhongMaterial({ 
+                color: 0xff0000,
+                emissive: 0xff0000,
+                emissiveIntensity: 0.5
+            });
+            
+            const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            leftEye.position.set(-0.2, 1.6, 0.5);
+            zombieGroup.add(leftEye);
+            
+            const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            rightEye.position.set(0.2, 1.6, 0.5);
+            zombieGroup.add(rightEye);
+            
+            const armGeometry = new THREE.BoxGeometry(0.4, 1.2, 0.4);
+            const leftArm = new THREE.Mesh(armGeometry, zombieMaterial);
+            leftArm.position.set(-0.8, 0.2, 0);
+            zombieGroup.add(leftArm);
+            
+            const rightArm = new THREE.Mesh(armGeometry, zombieMaterial);
+            rightArm.position.set(0.8, 0.2, 0);
+            zombieGroup.add(rightArm);
+            
+            zombieGroup.position.set(x, y, z);
+            scene.add(zombieGroup);
+            zombies.push(zombieGroup);
+            return zombieGroup;
+        }
+
+        for(let i = 0; i < 5; i++) {
+            const x = Math.random() * 40 - 20;
+            const z = Math.random() * 40 - 20;
+            createZombie(x, 1, z);
+        }
+
+        const waterGeometry = new THREE.PlaneGeometry(200, 200);
+        const waterMaterial = new THREE.MeshPhongMaterial({ 
+            color: 0x0077be,
+            transparent: true,
+            opacity: 0.6
+        });
+        const water = new THREE.Mesh(waterGeometry, waterMaterial);
+        water.rotation.x = -Math.PI / 2;
+        water.position.y = -1;
+        scene.add(water);
+
+        const groundGeometry = new THREE.BoxGeometry(100, 1, 100);
+        const groundMaterial = new THREE.MeshPhongMaterial({ color: 0x8B4513 });
+        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        ground.position.y = -0.5;
+        scene.add(ground);
+
+        const blocks = [];
+        const inventory = [];
+        const maxInventorySlots = 27;
+        const craftingGrid = Array(9).fill(null);
+        let selectedSlot = 0;
+
+        const inventoryDiv = document.getElementById('inventory-slots');
+        for(let i = 0; i < maxInventorySlots; i++) {
+            const slot = document.createElement('div');
+            slot.className = 'inventory-slot';
+            slot.onclick = () => selectInventorySlot(i);
+            inventoryDiv.appendChild(slot);
+            inventory[i] = null;
+        }
+
+        const craftingDiv = document.getElementById('crafting-grid');
+        for(let i = 0; i < 9; i++) {
+            const slot = document.createElement('div');
+            slot.className = 'crafting-slot';
+            slot.onclick = () => placeCraftingItem(i);
+            craftingDiv.appendChild(slot);
+        }
+
+        function selectInventorySlot(index) {
+            selectedSlot = index;
+            document.querySelectorAll('.inventory-slot').forEach((slot, i) => {
+                slot.style.border = i === selectedSlot ? '2px solid yellow' : '2px solid #777';
+            });
+        }
+
+        function placeCraftingItem(index) {
+            if(inventory[selectedSlot]) {
+                craftingGrid[index] = inventory[selectedSlot];
+                updateCraftingResult();
+            }
+        }
+
+        function updateCraftingResult() {
+            const resultSlot = document.getElementById('crafting-result');
+            resultSlot.innerHTML = '';
+        }
+
+        function createCube(x, y, z) {
+            const geometry = new THREE.BoxGeometry(1, 1, 1);
+            const material = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+            const cube = new THREE.Mesh(geometry, material);
+            cube.position.set(x, y, z);
+            scene.add(cube);
+            blocks.push(cube);
+            return cube;
+        }
+
+        for(let i = 0; i < 50; i++) {
+            const x = Math.random() * 20 - 10;
+            const y = Math.random() * 10;
+            const z = Math.random() * 20 - 10;
+            createCube(x, y, z);
+        }
+
+        const ambientLight = new THREE.AmbientLight(0x404040);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(5, 5, 5);
+        scene.add(directionalLight);
+
+        camera.position.z = 15;
+        camera.position.y = 5;
+
+        let velocity = new THREE.Vector3();
+        let isJumping = false;
+        const gravity = 0.005;
+        const jumpForce = 0.15;
+        let canJump = true;
+
+        let moveForward = false;
+        let moveBackward = false;
+        let moveLeft = false;
+        let moveRight = false;
+        let isMouseLocked = false;
+        let isInventoryOpen = false;
+        let isCraftingOpen = false;
+
+        let pitch = 0;
+        let yaw = 0;
+        
+        document.addEventListener('click', () => {
+            if (!isMouseLocked && !isInventoryOpen && !isCraftingOpen) {
+                renderer.domElement.requestPointerLock();
+            }
+        });
+
+        document.addEventListener('pointerlockchange', () => {
+            isMouseLocked = document.pointerLockElement === renderer.domElement;
+        });
+
+        document.addEventListener('mousemove', (event) => {
+            if (isMouseLocked) {
+                yaw -= event.movementX * 0.002;
+                pitch -= event.movementY * 0.002;
+                pitch = Math.max(-Math.PI/2, Math.min(Math.PI/2, pitch));
+                
+                camera.rotation.order = 'YXZ';
+                camera.rotation.y = yaw;
+                camera.rotation.x = pitch;
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'e') {
+                isInventoryOpen = !isInventoryOpen;
+                document.getElementById('inventory').style.display = isInventoryOpen ? 'block' : 'none';
+                if (isInventoryOpen) {
+                    document.exitPointerLock();
+                }
+            } else if (event.key === 'c') {
+                isCraftingOpen = !isCraftingOpen;
+                document.getElementById('crafting-table').style.display = isCraftingOpen ? 'block' : 'none';
+                if (isCraftingOpen) {
+                    document.exitPointerLock();
+                }
+            }
+
+            switch(event.key) {
+                case 'w': 
+                case 'ص': moveForward = true; break;
+                case 's':
+                case 'س': moveBackward = true; break;
+                case 'a':
+                case 'ش': moveLeft = true; break;
+                case 'd':
+                case 'ي': moveRight = true; break;
+                case ' ': if (canJump) { 
+                    velocity.y = jumpForce;
+                    canJump = false;
+                    isJumping = true;
+                } break;
+            }
+        });
+
+        document.addEventListener('keyup', (event) => {
+            switch(event.key) {
+                case 'w':
+                case 'ص': moveForward = false; break;
+                case 's':
+                case 'س': moveBackward = false; break;
+                case 'a':
+                case 'ش': moveLeft = false; break;
+                case 'd':
+                case 'ي': moveRight = false; break;
+            }
+        });
+
+        const raycaster = new THREE.Raycaster();
+        document.addEventListener('mousedown', (event) => {
+            if (event.button === 0 && isMouseLocked) {
+                raycaster.setFromCamera(new THREE.Vector2(), camera);
+                const intersects = raycaster.intersectObjects(blocks);
+                
+                if (intersects.length > 0) {
+                    const block = intersects[0].object;
+                    scene.remove(block);
+                    blocks.splice(blocks.indexOf(block), 1);
+                    for(let i = 0; i < maxInventorySlots; i++) {
+                        if(!inventory[i]) {
+                            inventory[i] = block.material.color.getHex();
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+
+        document.addEventListener('mousedown', (event) => {
+            if (event.button === 2 && isMouseLocked) {
+                raycaster.setFromCamera(new THREE.Vector2(), camera);
+                const intersects = raycaster.intersectObjects([ground, ...blocks]);
+                
+                if (intersects.length > 0) {
+                    const point = intersects[0].point;
+                    const normal = intersects[0].face.normal;
+                    const position = new THREE.Vector3()
+                        .copy(point)
+                        .add(normal)
+                        .round();
+                    
+                    createCube(position.x, position.y, position.z);
+                }
+            }
+        });
+
+        document.addEventListener('contextmenu', (event) => event.preventDefault());
+
+        function playerDeath() {
+            isPlayerDead = true;
+            document.exitPointerLock();
+            document.getElementById('game-over').style.display = 'block';
+            setTimeout(() => {
+
+            }, 3000);
+        }
+
+        function handleZombiesDeath() {
+            isZombiesDead = true;
+            document.exitPointerLock();
+            document.getElementById('game-over').style.display = 'block';
+            setTimeout(() => {
+                alert("تم القضاء على جميع الزومبي!");
+                location.reload();
+            }, 1000);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (isMouseLocked && !isPlayerDead) {
+                velocity.y -= gravity;
+                camera.position.y += velocity.y;
+
+                if (camera.position.y < 1) {
+                    camera.position.y = 1;
+                    velocity.y = 0;
+                    canJump = true;
+                    isJumping = false;
+                }
+
+                const moveSpeed = 0.1;
+                const direction = new THREE.Vector3();
+                
+                if (moveForward) direction.z -= 1;
+                if (moveBackward) direction.z += 1;
+                if (moveLeft) direction.x -= 1;
+                if (moveRight) direction.x += 1;
+                
+                direction.normalize();
+                direction.applyAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
+                
+                camera.position.x += direction.x * moveSpeed;
+                camera.position.z += direction.z * moveSpeed;
+
+                zombies.forEach(zombie => {
+                    const zombieDirection = new THREE.Vector3();
+                    zombieDirection.subVectors(camera.position, zombie.position);
+                    zombieDirection.y = 0;
+                    zombieDirection.normalize();
+                    
+                    const zombieSpeed = 0.03;
+                    zombie.position.x += zombieDirection.x * zombieSpeed;
+                    zombie.position.z += zombieDirection.z * zombieSpeed;
+                    
+                    zombie.lookAt(camera.position);
+
+                    const distance = zombie.position.distanceTo(camera.position);
+                    if (distance < 2) {
+                        playerDeath();
+                    }
+                });
+            }
+
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
