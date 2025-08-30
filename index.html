@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>𓂀𓆣𓅓𓏏𓊹 لعنة الفراعنة 𓊹𓏏𓅓𓆣𓂀</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap');
+    body {
+      background: radial-gradient(ellipse at center, #1a0a0a 0%, #2d1b0e 100%);
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'UnifrakturCook', cursive;
+      overflow: hidden;
+      position: relative;
+    }
+    h1 {
+      color: #e0c96b;
+      text-shadow: 0 0 20px #bfae3b, 0 0 40px #000, 2px 2px 0 #3a2c0a;
+      font-size: 3em;
+      letter-spacing: 0.2em;
+      margin-bottom: 30px;
+      font-family: 'UnifrakturCook', cursive;
+      animation: flicker 2s infinite alternate;
+      user-select: none;
+    }
+    @keyframes flicker {
+      0% { opacity: 1; text-shadow: 0 0 20px #bfae3b, 0 0 40px #000; }
+      50% { opacity: 0.7; text-shadow: 0 0 40px #e0c96b, 0 0 80px #000; }
+      100% { opacity: 1; text-shadow: 0 0 20px #bfae3b, 0 0 40px #000; }
+    }
+    .scarab {
+      width: 160px;
+      height: 160px;
+      position: relative;
+      margin-bottom: 20px;
+      animation: scarab-crawl 6s infinite alternate cubic-bezier(.7,0,.3,1);
+      filter: drop-shadow(0 0 30px #2e1e0e);
+      z-index: 2;
+    }
+    @keyframes scarab-crawl {
+      0% { transform: translateX(-80px) scale(1) rotate(-10deg);}
+      20% { transform: translateX(0px) scale(1.1) rotate(0deg);}
+      50% { transform: translateX(80px) scale(1.2) rotate(10deg);}
+      80% { transform: translateX(0px) scale(1.1) rotate(0deg);}
+      100% { transform: translateX(-80px) scale(1) rotate(-10deg);}
+    }
+    .curse {
+      color: #b22222;
+      font-size: 1.5em;
+      margin-top: 40px;
+      letter-spacing: 0.1em;
+      text-shadow: 0 0 10px #000, 0 0 20px #b22222;
+      background: rgba(0,0,0,0.4);
+      padding: 18px 30px;
+      border-radius: 12px;
+      border: 2px solid #e0c96b;
+      box-shadow: 0 0 30px #2d1b0e inset;
+      font-family: 'UnifrakturCook', cursive;
+      animation: curse-glow 2.5s infinite alternate;
+      user-select: none;
+    }
+    @keyframes curse-glow {
+      0% { text-shadow: 0 0 10px #000, 0 0 20px #b22222; }
+      100% { text-shadow: 0 0 30px #b22222, 0 0 60px #000; }
+    }
+    .glyphs {
+      position: absolute;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .glyph {
+      position: absolute;
+      font-size: 2.5em;
+      color: rgba(224,201,107,0.13);
+      font-family: 'UnifrakturCook', cursive;
+      user-select: none;
+      animation: glyph-float 12s infinite linear;
+    }
+    @keyframes glyph-float {
+      0% { transform: translateY(0) rotate(0deg);}
+      100% { transform: translateY(100vh) rotate(360deg);}
+    }
+    /* Creepy eyes */
+    .eyes {
+      position: absolute;
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 60px;
+      z-index: 3;
+    }
+    .eye {
+      width: 38px;
+      height: 38px;
+      background: #111;
+      border-radius: 50%;
+      border: 3px solid #e0c96b;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 20px #b22222 inset, 0 0 10px #e0c96b;
+      animation: eye-blink 7s infinite;
+    }
+    .pupil {
+      width: 12px;
+      height: 12px;
+      background: #b22222;
+      border-radius: 50%;
+      position: absolute;
+      top: 13px;
+      left: 13px;
+      animation: pupil-move 3s infinite alternate;
+    }
+    @keyframes eye-blink {
+      0%, 90%, 100% { height: 38px; }
+      95% { height: 8px; }
+    }
+    @keyframes pupil-move {
+      0% { left: 13px; top: 13px;}
+      50% { left: 18px; top: 18px;}
+      100% { left: 13px; top: 13px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="glyphs">
+    <span class="glyph" style="top:5%; left:10%; animation-delay:0s;">𓆣</span>
+    <span class="glyph" style="top:15%; left:80%; animation-delay:2s;">𓂀</span>
+    <span class="glyph" style="top:40%; left:30%; animation-delay:4s;">𓅓</span>
+    <span class="glyph" style="top:60%; left:60%; animation-delay:1s;">𓏏</span>
+    <span class="glyph" style="top:80%; left:20%; animation-delay:3s;">𓊹</span>
+    <span class="glyph" style="top:70%; left:70%; animation-delay:5s;">𓆣</span>
+    <span class="glyph" style="top:10%; left:50%; animation-delay:6s;">𓂀</span>
+    <span class="glyph" style="top:50%; left:80%; animation-delay:7s;">𓅓</span>
+  </div>
+  <h1>𓂀 لعنة الفراعنة 𓊹</h1>
+  <div class="scarab">
+    <!-- Creepy animated scarab beetle SVG -->
+    <svg viewBox="0 0 160 160" width="160" height="160">
+      <ellipse cx="80" cy="80" rx="50" ry="60" fill="#2d1b0e" stroke="#e0c96b" stroke-width="6"/>
+      <ellipse cx="80" cy="70" rx="30" ry="40" fill="#b22222" stroke="#e0c96b" stroke-width="3"/>
+      <ellipse cx="80" cy="110" rx="18" ry="12" fill="#e0c96b" opacity="0.7"/>
+      <!-- Eyes -->
+      <ellipse cx="65" cy="60" rx="6" ry="8" fill="#fff"/>
+      <ellipse cx="95" cy="60" rx="6" ry="8" fill="#fff"/>
+      <ellipse cx="65" cy="62" rx="2" ry="3" fill="#b22222"/>
+      <ellipse cx="95" cy="62" rx="2" ry="3" fill="#b22222"/>
+      <!-- Legs -->
+      <path d="M30,60 Q10,80 30,100" stroke="#e0c96b" stroke-width="5" fill="none"/>
+      <path d="M130,60 Q150,80 130,100" stroke="#e0c96b" stroke-width="5" fill="none"/>
+      <path d="M40,40 Q20,30 40,80" stroke="#e0c96b" stroke-width="3" fill="none"/>
+      <path d="M120,40 Q140,30 120,80" stroke="#e0c96b" stroke-width="3" fill="none"/>
+      <path d="M50,120 Q30,140 60,130" stroke="#e0c96b" stroke-width="3" fill="none"/>
+      <path d="M110,120 Q130,140 100,130" stroke="#e0c96b" stroke-width="3" fill="none"/>
+      <!-- Mandibles -->
+      <path d="M70,40 Q80,20 90,40" stroke="#b22222" stroke-width="4" fill="none"/>
+    </svg>
+  </div>
+  <div class="curse">
+    𓆣 احذر! من يدخل هنا تصيبه لعنة الفراعنة الأبدية...<br>
+    <span style="font-size:1.2em; color:#e0c96b;">𓂀𓏏𓊹𓅓𓆣</span>
+  </div>
+  <div class="eyes">
+    <div class="eye"><div class="pupil"></div></div>
+    <div class="eye"><div class="pupil"></div></div>
+    <div class="eye"><div class="pupil"></div></div>
+  </div>
+</body>
+</html>
